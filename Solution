@@ -17,4 +17,6 @@ ids=ids[!ids %in% mat_df$id2]
 uniq_ids=c(other_ids,ids)
 uniq_ids=sort(uniq_ids)
 #Printing the output
-for(i in 1:length(uniq_ids))print(df[uniq_ids[i],])
+for(i in 1:length(uniq_ids))d2<-rbind(d2,df[uniq_ids[i],])
+#Saving the output to a file
+write.csv(d2,"Solution.csv")
