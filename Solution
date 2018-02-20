@@ -1,0 +1,20 @@
+library(stringi)
+library(stringr)
+df=read.csv('Deduplication Problem - Sample Dataset.csv')
+#Extracting the first and last name only
+df$ln=str_extract(pattern = '[A-z]+',string = df$ln)
+df$fn=str_extract(pattern = '[A-z]+',string = df$fn)
+
+library(RecordLinkage)
+#Generating pair comparisons
+mat=compare.dedup(df,blockfld=c(2),strcmp = c(1,3,4),strcmpfun = jarowinkler)
+mat_df=mat$pairs
+mat_df=mat_df[mat_df$ln>=0.8&mat_df$fn>=0.8,]
+other_ids=c(1:nrow(df))[!c(1:nrow(df)) %in% unique(c(mat_df$id1,mat_df$id2))]
+#Compiling all the unique records
+ids=unique(mat_df$id1)
+ids=ids[!ids %in% mat_df$id2]
+uniq_ids=c(other_ids,ids)
+uniq_ids=sort(uniq_ids)
+#Printing the output
+for(i in 1:length(uniq_ids))print(df[uniq_ids[i],])
